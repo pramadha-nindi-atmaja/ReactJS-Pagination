@@ -1,7 +1,11 @@
 import { Router } from "express";
 import personalRoute from "./personal.route.js";
+
 const router = Router();
 
-router.use("/api", personalRoute);
+/**
+ * API ROOT ROUTES
+ */
+router.use("/api/personal", personalRoute);
 
 export default router;
