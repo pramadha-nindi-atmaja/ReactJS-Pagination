@@ -1,37 +1,40 @@
 import { Router } from "express";
-import { 
-  getPersonaldata, 
-  getPersonalById, 
+import {
+  getPersonaldata,
+  getPersonalById,
   exportPersonalData,
-  requestTimer
+  requestTimer,
 } from "../controllers/personal.controller.js";
+
 const personalRoute = Router();
 
-// Middleware for tracking request timing
+/**
+ * Middleware: Track request timing
+ */
 personalRoute.use(requestTimer);
 
-// Get all personals with pagination and search
-personalRoute.get("/personals", getPersonaldata);
+/**
+ * Validate route param :id
+ */
+personalRoute.param("id", (req, res, next, id) => {
+  const parsedId = Number(id);
 
-// Get a single personal by ID
-personalRoute.get("/personals/:id", getPersonalById);
-
-// Export personal data
-personalRoute.get("/personals-export", exportPersonalData);
-
-// Route parameter validation middleware
-personalRoute.param('id', (req, res, next, id) => {
-  const parsedId = parseInt(id);
-  
-  if (isNaN(parsedId)) {
+  if (Number.isNaN(parsedId)) {
     return res.status(400).json({
       status: "error",
-      message: "Invalid ID parameter. Must be a number."
+      message: "Invalid ID parameter. Must be a valid number.",
     });
   }
-  
+
   req.parsedId = parsedId;
   next();
 });
+
+/**
+ * Routes
+ */
+personalRoute.get("/", getPersonaldata);
+personalRoute.get("/:id", getPersonalById);
+personalRoute.get("/export/list", exportPersonalData);
 
 export default personalRoute;
